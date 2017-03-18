@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
 
 public class Client {
 
-	// Client socket
+	// Client socket to connect to chat server
 	private static Socket clientSocket;
 	// output stream to server
 	private static PrintStream outStream;
@@ -38,18 +38,61 @@ public class Client {
 	private static String host;
 	//String to store user input for checking
 	private static String userInput;
-
-
+	//Server socket for client to listen to peer chat requests with
+	private static ServerSocket chatListenSocket;
+	//Socket to communicate peer to peer chat over
+	private static Socket chatSocket;
 	
 	public static void main(String[] args) {
-		// server listen port set to 27359
+		// server listen port set to 27459
 		portNumber = 27459;
 		// default host is local machine
 		host = "localhost";
+		
+		/**
+		 * Thread listenChat 
+		 * 
+		 * Thread to set up a listening port for a peer to peer chat request
+		 * The peer chat listening port is set to 27459
+		 * Will start a peer to peer chat thread if a connection request is received
+		 */
+		Thread listenChat = new Thread(new Runnable() {
+			public void run(){
+				try {
+					//Set up a socket to listen for chat requests at 27459
+					chatListenSocket = new ServerSocket(portNumber);
+					
+					//Listen until a peer to peer chat session has been initiated
+					//either by sending a request to a peer, or a peer sending a request 
+					while(true) {
+						//if a chat session is started, prevent listening for any more connections
+						while(chatting) {
+							Thread.sleep(1);
+						}
+						
+						chatSocket = chatListenSocket.accept();
+						chatting = true;
+						//Start a peer to peer chat thread with chatSocket if connection is received
+						new PeerChat(chatSocket).start();
+						
+					}
+					
+				} catch (IOException e) {
+					System.out.println(e);
+				} catch (InterruptedException e) {
+					e.printStackTrace(System.out);
+				}
+			}
+		});
+		
+		
 
-		/*
+		/**
+		 * Thread fromServer
+		 * 
 		 * Create separate thread to read from the server Keep on reading until
 		 * "** BYE" is received from the server then break and stop thread
+		 * Will start a listenChat thread to listen for chat requests when the user JOINs the server
 		 */
 		Thread fromServer = new Thread(new Runnable() {
 			public void run() {
@@ -59,6 +102,12 @@ public class Client {
 					while ((response = inStream.readLine()) != null) {
 						// While the server is responding print response to console
 						System.out.println(response);
+						
+						// if "Welcome" is received, user has joined, start start listening for chat requests
+						if(response.indexOf("Welcome") != -1) {
+							listenChat.start();
+						}
+						
 						// if "** BYE" is received then break
 						if (response.indexOf("*** Bye") != -1)
 							break;
@@ -71,7 +120,9 @@ public class Client {
 			}
 		});
 		
-		/*
+		/**
+		 * Thread contactServer
+		 * 
 		 * Thread to contact the server and to send user input to the server
 		 */
 		Thread contactServer = new Thread(new Runnable() {
@@ -115,18 +166,20 @@ public class Client {
 						// create a thread to read from the server
 						fromServer.start();
 						while (!closed) {
-							
 							// read input from user and send it to the server as long as client thread is running
 							userInput = inputLine.readLine().trim();
 							if(userInput.equals("CHAT")) {
 								chatting = true;
+								System.out.println("Enter the IP of the peer you wish to chat with: ");
+								String chatPeerAddress = inputLine.readLine().trim();
+								chatSocket = new Socket(chatPeerAddress, portNumber);
+								//Start a peer to peer chat thread with chatSocket
+								new PeerChat(chatSocket).start();
 							}
 							
-							//If the user enters "CHAT", suspend this thread and launch the peer to peer chat thread
-							//Only suspend the thread that sends to the server, as the server should not send to this 
-							//client if nothing is sent to it
+							//If the user starts a peer chat session, suspend this thread that sends to the server 
 							if(chatting) {
-								wait();
+								Thread.sleep(1);
 							}
 							outStream.println(userInput);
 						}
@@ -144,18 +197,31 @@ public class Client {
 
 			}
 		});
-
-		Thread peerChat = new Thread(new Runnable() {
-			public void run() {
-				//Server socket to receive from chat partner
-				ServerSocket serverSocket = null;
-				//Client socket to send to chat partner
-				Socket clientSocket = null;
-			}
-		});
+		
 		
 		//run thread to contact server
 		contactServer.start();
 	}
+}
 
+/**
+ * Class PeerChat
+ *  
+ *  This class contains a thread that will handle peer to peer chatting
+ *  The thread is run when the client sends a request to a peer to chat or
+ *  the client receives a chat request from a peer.
+ */
+class PeerChat extends Thread {
+	
+	/**
+	 * Constructor
+	 * @param chatSocket
+	 */
+	PeerChat(Socket chatSocket) {
+		
+	}
+	
+	public void run() {
+		
+	}
 }
