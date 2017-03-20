@@ -53,7 +53,7 @@ public class Server {
 		while (true) {
 			try {
 				clientSocket = serverSocket.accept();
-				System.out.println("Client connected");
+				System.out.println(clientSocket.getInetAddress().toString() + " connected");
 				int i = 0;
 				for (i = 0; i < maxClientsCount; i++) {
 					if (threads[i] == null) {
@@ -138,7 +138,7 @@ class clientThread extends Thread {
 			
 			//once client has joined they cannot join again
 			while (looping) {
-				os.println("To see a list of other online players enter LIST.\nTo leave enter LEAVE.");
+				os.println("To see a list of other online players enter LIST.\nCHAT to start a chat session.\nTo leave enter LEAVE.");
 				line = is.readLine();
 				// If LEAVE is entered break the loop and close the connection
 				if (line.startsWith("LEAVE")) {
