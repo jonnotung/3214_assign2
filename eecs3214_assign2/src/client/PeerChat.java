@@ -28,15 +28,18 @@ class PeerChat extends Thread {
 	private boolean iStartedChat;
 	//switch to determine whether chat session is finished or not
 	boolean looping = true;
-	String myName, peerName;
+	String myName=" ";
+	String peerName = " ";
 		
 	/**
 	 * Creates a thread to handle peer to peer chat, to be handled over the given socket
 	 * @param chatSocket
 	 */
-	public PeerChat(Socket socket, boolean iStarted) {
+	public PeerChat(Socket socket, boolean iStarted, String myname) {
 		chatSocket = socket;
 		iStartedChat = iStarted;
+		myName = myname;
+	
 	}
 	
 	/**
@@ -47,15 +50,22 @@ class PeerChat extends Thread {
 			// String to store server response
 			String response;
 			try {
-				while ((response = inStream.readLine()) != null) {
+				while ((response = inStream.readLine()) != null && looping) {
 					// if "EXITCHAT" is received then break
 					if (response.indexOf("EXITCHAT") != -1) {
 						outStream.println("EXITCHAT");
 						break;
 					}
-					
+					//If peer is querying for my name, send it with the flag ***NAME
+					if(response.indexOf("***QUERYNAME") != -1) {
+						outStream.println("***NAME " + myName);
+					}
+					//If peer is responding to a name query with ***NAME flag, parse the name and store in peerName
+					if(response.indexOf("***NAME") != -1) {
+						peerName = response.split(" ", 2)[1].trim();
+					}
 					// While the peer is responding print response to console
-					System.out.println("Peer: " + response);
+					System.out.println(peerName + ": " + response);
 				}
 				// close the client process
 				looping = false;
@@ -72,62 +82,30 @@ class PeerChat extends Thread {
 		try {
 			// Create user input stream
 			inputLine = new BufferedReader(new InputStreamReader(System.in));
-			// Creates output stream to server
+			// Creates output stream to peer
 			outStream = new PrintStream(chatSocket.getOutputStream());
-			// Creates input stream from server
+			// Creates input stream from peer
 			inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 
 		} catch (IOException ioe) {
-			System.out.println("Could not get I/O from host: \n");
+			System.out.println("Could not get I/O from peer: \n");
 			ioe.printStackTrace(System.out);
 		}
 
 		if (chatSocket != null && outStream != null && inStream != null) {
 			try {
-				//If user did not initiate chat, ask them if they want to accept the chat
-				if(!iStartedChat) {
-					while(looping) {
-						System.out.println("Chat request received, accept? YES/NO");
-						userInput = inputLine.readLine().trim();
-						//If user does not want to accept chat
-						if(userInput.equals("NO")) {
-							//skip all subsequent loops and close sockets
-							looping = false;
-							outStream.println("***REJECTED");
-						}
-						else if (userInput.equals("YES")){
-							outStream.println("***ACCEPTED");
-							break;
-						}
-					}
-				}
-				//if user initiated chat, wait for accept or reject response
-				else {
-					//Get response from peer
-					while ((response = inStream.readLine()) != null) {
-						
-						// if "***ACCEPTED" is received then break and continue
-						if (response.indexOf("***ACCEPTED") != -1) {
-							break;
-						}
-						// if ***REJECTED is received break and skip to end where socket and connections are closed
-						else if (response.indexOf("***REJECTED") != -1) {
-							System.out.println("Chat request rejected.");
-							looping = false;
-							break;
-						}
-					}
-				}
 				
 				//If chat session was not rejected, print message saying it has started
-				if(looping) {
-					System.out.println("Chat session started. Type EXITCHAT to exit.");
-					//Start a thread to receive chat from peer
-					new Thread(peerResponse).start();
-				}
+
+				System.out.println("Chat session started. Type EXITCHAT to exit.");
+				//Start a thread to receive chat from peer
+				new Thread(peerResponse).start();
+				
+				//ask peer for their name
+				outStream.println("***QUERYNAME");
 				
 				while(looping) {
-					System.out.print("Me: ");
+					System.out.print(myName + ": ");
 					userInput = inputLine.readLine().trim();
 					outStream.println(userInput);
 					//exit chat if EXITCHAT is entered

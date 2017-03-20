@@ -28,9 +28,9 @@ public class Client implements Runnable {
 	private static boolean closed = false;
 	
 	//The current user's name
-	private static String myName;
+	private static String myName = null;
 	//The name of person the current user is chatting to
-	private static String peerName;
+	private static String peerName = null;
 	//Port of server to connect to
 	private static int portNumber;
 	//Address of server to connect to
@@ -98,17 +98,22 @@ public class Client implements Runnable {
 				while (!closed) {
 					// read input from user and send it to the server as long as client thread is running
 					userInput = inputLine.readLine().trim();
-					//If user enters CHAT
+					
+					//If user wants to chat
 					if(userInput.equals("CHAT")) {
 						
-						System.out.println("Enter the IP of the peer you wish to chat with: ");
+						System.out.println("Enter the IP address of the peer you wish to chat with: ");
+						//ask for the IP address of the chat peer
 						String chatPeerAddress = inputLine.readLine().trim();
+						
+						//Create a socket to conduct chat over
 						chatSocket = new Socket(chatPeerAddress, portNumber);
+						//if the socket successfully connects
 						if(chatSocket != null) {
 							
 							System.out.println("Peer connecteded. Disconnecting from server.");
-							//Start a peer to peer chat thread with chatSocket
-							peerChat = new PeerChat(chatSocket, true);
+							//Start a peer to peer chat thread using chatSocket
+							peerChat = new PeerChat(chatSocket, true, myName);
 							peerChat.start();
 							//chat session started, only 1 at a time, stop listening for chat requests
 							peerListener.stopListening();
@@ -151,19 +156,23 @@ public class Client implements Runnable {
 		try {
 			while ((response = inStream.readLine()) != null && !closed) {
 				// While the server is responding print response to console
-				System.out.println(response);
+				
 
 				// if "Welcome" is received, user has joined, start start listening for chat requests
 				if(response.indexOf("Welcome") != -1) {
 					//parse user's name and store in myName
 					myName = response.split(" ", 2)[1];
-					peerListener = new PeerListen();
+					System.out.println(response);
+					peerListener = new PeerListen(myName);
 					peerListener.start();
 				}
-
+				
 				// if "** BYE" is received then break
-				if (response.indexOf("*** Bye") != -1)
+				if (response.indexOf("*** Bye") != -1) {
+					System.out.println(response);
 					break;
+				}
+					
 			}
 			// close the client process
 			closed = true;

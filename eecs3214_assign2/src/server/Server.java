@@ -156,7 +156,8 @@ class clientThread extends Thread {
 							}
 						}
 					}
-				}
+				} 
+				
 			}
 			//Client thread has finished. 
 			os.println("*** Bye " + name + " ***");
