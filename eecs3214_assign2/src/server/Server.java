@@ -166,9 +166,11 @@ class clientThread extends Thread {
 			 * Clean up. Set the current thread variable to null so that a new
 			 * client could be accepted by the server.
 			 */
+			String tempAddress = "";
 			synchronized (this) {
 				for (int i = 0; i < maxClientsCount; i++) {
 					if (threads[i] == this) {
+						tempAddress = threads[i].clientSocket.getInetAddress().toString();
 						threads[i] = null;
 					}
 				}
@@ -177,7 +179,7 @@ class clientThread extends Thread {
 			 * Close the output stream, close the input stream, close the
 			 * socket.
 			 */
-			System.out.println("Client disconnected");
+			System.out.println(tempAddress + " disconnected");
 			is.close();
 			os.close();
 			clientSocket.close();
