@@ -111,7 +111,7 @@ class PeerChat extends Thread {
 					userInput = inputLine.readLine().trim();
 					outStream.println(userInput);
 					//exit chat if EXITCHAT is entered
-					if (userInput.equals("EXITCHAT")){
+					if (userInput.trim().equals("EXITCHAT")){
 						break;
 					}
 				}

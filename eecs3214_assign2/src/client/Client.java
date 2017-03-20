@@ -113,11 +113,12 @@ public class Client implements Runnable {
 							
 							System.out.println("Peer connecteded. Disconnecting from server.");
 							//Start a peer to peer chat thread using chatSocket
-							peerChat = new PeerChat(new Socket(chatSocket.getInetAddress(), chatSocket.getPort()), true, myName);
+							peerChat = new PeerChat(chatSocket, true, myName);
 							peerChat.start();
 							//chat session started, only 1 at a time, stop listening for chat requests
 							peerListener.stopListening();
 							//stop threads communicating with server, since we want command line input to go to chat, not the server
+							outStream.println("LEAVE");
 							closed = true;
 						}
 						else {
