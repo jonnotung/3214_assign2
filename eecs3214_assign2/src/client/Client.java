@@ -75,7 +75,7 @@ public class Client implements Runnable {
 			// Creates input stream from server
 			inStream = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-			System.out.println("Now using host: " + host + "at port " + portNumber);
+			System.out.println("Now using host: " + host + " at port " + portNumber);
 
 		} catch (UnknownHostException e) {
 			System.out.println("Unknown host: \n");
@@ -92,8 +92,8 @@ public class Client implements Runnable {
 		if (clientSocket != null && outStream != null && inStream != null) {
 			try {
 				// create a thread to read from the server
-				serverResponse = new Thread(new Client());
-				serverResponse.start();
+				new Thread(new Client()).start();
+				
 				
 				while (!closed) {
 					// read input from user and send it to the server as long as client thread is running
@@ -135,7 +135,7 @@ public class Client implements Runnable {
 				inStream.close();
 				clientSocket.close();
 			} catch (IOException e) {
-				//e.printStackTrace();
+				e.printStackTrace();
 			} 
 		}
 
@@ -162,22 +162,23 @@ public class Client implements Runnable {
 				if(response.indexOf("Welcome") != -1) {
 					//parse user's name and store in myName
 					myName = response.split(" ", 2)[1];
-					System.out.println(response);
+					//System.out.println(response);
 					peerListener = new PeerListen(myName);
 					peerListener.start();
 				}
 				
 				// if "** BYE" is received then break
 				if (response.indexOf("*** Bye") != -1) {
-					System.out.println(response);
+					//System.out.println(response);
 					break;
 				}
+				System.out.println(response);
 					
 			}
 			// close the client process
 			closed = true;
 		} catch (IOException e) {
-			//e.printStackTrace(System.out);
+			e.printStackTrace();
 		}
 
 	}
