@@ -30,7 +30,7 @@ public class Client implements Runnable {
 	//The current user's name
 	private static String myName;
 	//The name of person the current user is chatting to
-	private static String buddyName;
+	private static String peerName;
 	//Port of server to connect to
 	private static int portNumber;
 	//Address of server to connect to
@@ -106,7 +106,7 @@ public class Client implements Runnable {
 						chatSocket = new Socket(chatPeerAddress, portNumber);
 						if(chatSocket != null) {
 							
-							System.out.println("Peer connected. Waiting for peer to accept chat request. Disconnecting from server.");
+							System.out.println("Peer connecteded. Disconnecting from server.");
 							//Start a peer to peer chat thread with chatSocket
 							peerChat = new PeerChat(chatSocket, true);
 							peerChat.start();
@@ -130,7 +130,7 @@ public class Client implements Runnable {
 				inStream.close();
 				clientSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace(System.out);
+				//e.printStackTrace();
 			} 
 		}
 
@@ -168,7 +168,7 @@ public class Client implements Runnable {
 			// close the client process
 			closed = true;
 		} catch (IOException e) {
-			e.printStackTrace(System.out);
+			//e.printStackTrace(System.out);
 		}
 
 	}

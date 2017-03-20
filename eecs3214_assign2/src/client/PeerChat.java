@@ -28,6 +28,7 @@ class PeerChat extends Thread {
 	private boolean iStartedChat;
 	//switch to determine whether chat session is finished or not
 	boolean looping = true;
+	String myName, peerName;
 		
 	/**
 	 * Creates a thread to handle peer to peer chat, to be handled over the given socket
