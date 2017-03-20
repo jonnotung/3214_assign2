@@ -25,7 +25,6 @@ class PeerChat extends Thread {
 	private  BufferedReader inputLine;
 	String userInput;
 	//switch to identify whether user initiated peer chat, or they were contacted by a peer
-	private boolean iStartedChat;
 	//switch to determine whether chat session is finished or not
 	boolean looping = true;
 	String myName=" ";
@@ -35,11 +34,11 @@ class PeerChat extends Thread {
 	 * Creates a thread to handle peer to peer chat, to be handled over the given socket
 	 * @param chatSocket
 	 */
-	public PeerChat(Socket socket, boolean iStarted, String myname) {
+	public PeerChat(Socket socket, String myname, PrintStream out, BufferedReader in) {
 		chatSocket = socket;
-		iStartedChat = iStarted;
 		myName = myname;
-	
+		outStream = out;
+		inStream = in;
 	}
 	
 	/**
@@ -80,19 +79,13 @@ class PeerChat extends Thread {
 	
 	@Override
 	public void run() {
-		String response;
-		try {
-			// Create user input stream
-			inputLine = new BufferedReader(new InputStreamReader(System.in));
-			// Creates output stream to peer
-			outStream = new PrintStream(chatSocket.getOutputStream());
-			// Creates input stream from peer
-			inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
-
-		} catch (IOException ioe) {
-			System.out.println("Could not get I/O from peer: \n");
-			ioe.printStackTrace(System.out);
-		}
+		
+		// Create user input stream
+		inputLine = new BufferedReader(new InputStreamReader(System.in));
+		// Creates output stream to peer
+		//outStream = new PrintStream(chatSocket.getOutputStream());
+		// Creates input stream from peer
+		//inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 
 		if (chatSocket != null && outStream != null && inStream != null) {
 			try {

@@ -20,6 +20,8 @@ public class PeerListen extends Thread {
 	private Socket chatSocket;
 	private final int portNumber = 27459;
 	private boolean closed, chatting;
+	private PrintStream outStream;
+	private BufferedReader inStream;
 	String myName;
 	PeerChat peerChat;
 	
@@ -43,15 +45,18 @@ public class PeerListen extends Thread {
 				//if a chat session is started, prevent listening for any more connections
 				
 				chatSocket = chatListenSocket.accept();
-				
+				// Creates output stream to peer
+				outStream = new PrintStream(chatSocket.getOutputStream());
+				// Creates input stream from peer
+				inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 				//Start a peer to peer chat thread with chatSocket if connection is received
-				peerChat = new PeerChat(chatSocket, false, myName);
+				peerChat = new PeerChat(chatSocket, myName, outStream, inStream);
 				peerChat.start();
 				closed = true;
 				break;
 			}
 			chatListenSocket.close();
-			chatSocket.close();
+			
 		} catch (IOException e) {
 			//System.out.println(e);
 		} 

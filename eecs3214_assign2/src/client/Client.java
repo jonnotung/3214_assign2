@@ -111,9 +111,14 @@ public class Client implements Runnable {
 						//if the socket successfully connects
 						if(chatSocket != null) {
 							
+							//get input line from chatSocket
+							BufferedReader inChat = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+							//get output line from chatSocket
+							PrintStream outChat = new PrintStream(chatSocket.getOutputStream());
+							
 							System.out.println("Peer connecteded. Disconnecting from server.");
 							//Start a peer to peer chat thread using chatSocket
-							peerChat = new PeerChat(chatSocket, true, myName);
+							peerChat = new PeerChat(chatSocket, myName, outChat, inChat);
 							peerChat.start();
 							//chat session started, only 1 at a time, stop listening for chat requests
 							peerListener.stopListening();
