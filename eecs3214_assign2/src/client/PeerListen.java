@@ -45,13 +45,15 @@ public class PeerListen extends Thread {
 				chatSocket = chatListenSocket.accept();
 				
 				//Start a peer to peer chat thread with chatSocket if connection is received
-				peerChat = new PeerChat(chatSocket, false, myName);
+				peerChat = new PeerChat(new Socket(chatSocket.getInetAddress(), chatSocket.getPort()), false, myName);
 				peerChat.start();
 				closed = true;
+				break;
 			}
 			chatListenSocket.close();
+			chatSocket.close();
 		} catch (IOException e) {
-			System.out.println(e);
+			//System.out.println(e);
 		} 
 		
 	}

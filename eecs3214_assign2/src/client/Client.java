@@ -113,7 +113,7 @@ public class Client implements Runnable {
 							
 							System.out.println("Peer connecteded. Disconnecting from server.");
 							//Start a peer to peer chat thread using chatSocket
-							peerChat = new PeerChat(chatSocket, true, myName);
+							peerChat = new PeerChat(new Socket(chatSocket.getInetAddress(), chatSocket.getPort()), true, myName);
 							peerChat.start();
 							//chat session started, only 1 at a time, stop listening for chat requests
 							peerListener.stopListening();
@@ -131,11 +131,12 @@ public class Client implements Runnable {
 				}
 
 				// Close I/O streams and socket when done
+				chatSocket.close();
 				outStream.close();
 				inStream.close();
 				clientSocket.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			} 
 		}
 
@@ -178,7 +179,7 @@ public class Client implements Runnable {
 			// close the client process
 			closed = true;
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 	}

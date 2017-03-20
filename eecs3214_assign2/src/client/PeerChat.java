@@ -54,6 +54,7 @@ class PeerChat extends Thread {
 					// if "EXITCHAT" is received then break
 					if (response.indexOf("EXITCHAT") != -1) {
 						outStream.println("EXITCHAT");
+						looping = false;
 						break;
 					}
 					//If peer is querying for my name, send it with the flag ***NAME
@@ -65,12 +66,13 @@ class PeerChat extends Thread {
 						peerName = response.split(" ", 2)[1].trim();
 					}
 					// While the peer is responding print response to console
-					System.out.println(peerName + ": " + response);
+					System.out.print(peerName + ": ");
+					System.out.println(response);
 				}
 				// close the client process
 				looping = false;
 			} catch (IOException e) {
-				e.printStackTrace(System.out);
+				//e.printStackTrace(System.out);
 			}
 
 		}
