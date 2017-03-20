@@ -69,7 +69,7 @@ class PeerChat extends Thread {
 					System.out.println(response);
 				}
 				// close the client process
-				looping = false;
+				//looping = false;
 			} catch (IOException e) {
 				//e.printStackTrace(System.out);
 			}
@@ -77,6 +77,7 @@ class PeerChat extends Thread {
 		}
 	});
 	
+	//Main chat thread, takes input from user and sends to peer
 	@Override
 	public void run() {
 		
@@ -105,6 +106,7 @@ class PeerChat extends Thread {
 					outStream.println(userInput);
 					//exit chat if EXITCHAT is entered
 					if (userInput.trim().equals("EXITCHAT")){
+						looping = false;
 						break;
 					}
 				}

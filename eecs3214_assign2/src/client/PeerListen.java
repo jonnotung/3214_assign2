@@ -17,7 +17,7 @@ import java.net.UnknownHostException;
  */
 public class PeerListen extends Thread {
 	private ServerSocket chatListenSocket;
-	private Socket chatSocket;
+	private Socket chatSocket = null;
 	private final int portNumber = 27459;
 	private boolean closed, chatting;
 	private PrintStream outStream;
@@ -49,11 +49,14 @@ public class PeerListen extends Thread {
 				outStream = new PrintStream(chatSocket.getOutputStream());
 				// Creates input stream from peer
 				inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
-				//Start a peer to peer chat thread with chatSocket if connection is received
-				peerChat = new PeerChat(chatSocket, myName, outStream, inStream);
-				peerChat.start();
-				closed = true;
-				break;
+				
+				if(chatSocket != null){
+					//Start a peer to peer chat thread with chatSocket if connection is received
+					peerChat = new PeerChat(chatSocket, myName, outStream, inStream);
+					peerChat.start();
+					closed = true;
+					break;
+				}
 			}
 			chatListenSocket.close();
 			
