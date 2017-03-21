@@ -19,7 +19,7 @@ public class PeerListen extends Thread {
 	private ServerSocket chatListenSocket;
 	private Socket chatSocket = null;
 	private final int portNumber = 27459;
-	private boolean closed, chatting;
+	private boolean closed;
 	private PrintStream outStream;
 	private BufferedReader inStream;
 	private PrintStream serverOut;
@@ -75,13 +75,12 @@ public class PeerListen extends Thread {
 	
 	public void start() {
 		closed = false;
-		chatting = false;
 		super.start();
 	}
 	
 	public void stopListening() {
 		try {
-			chatSocket.close();
+			chatListenSocket.close();
 		} catch (IOException e) {
 			
 		}
