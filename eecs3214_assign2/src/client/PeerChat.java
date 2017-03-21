@@ -86,7 +86,7 @@ class PeerChat extends Thread {
 		// Creates output stream to peer
 		outStream = new PrintStream(chatSocket.getOutputStream());
 		// Creates input stream from peer
-			inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+		inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

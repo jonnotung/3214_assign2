@@ -137,7 +137,7 @@ public class Client implements Runnable {
 				}
 
 				// Close I/O streams and socket when done
-				chatSocket.close();
+				
 				outStream.close();
 				inStream.close();
 				clientSocket.close();
