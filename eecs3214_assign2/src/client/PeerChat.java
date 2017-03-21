@@ -80,13 +80,16 @@ class PeerChat extends Thread {
 	//Main chat thread, takes input from user and sends to peer
 	@Override
 	public void run() {
-		
+		try {
 		// Create user input stream
 		inputLine = new BufferedReader(new InputStreamReader(System.in));
 		// Creates output stream to peer
-		//outStream = new PrintStream(chatSocket.getOutputStream());
+		outStream = new PrintStream(chatSocket.getOutputStream());
 		// Creates input stream from peer
-		//inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+			inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		if (chatSocket != null && outStream != null && inStream != null) {
 			try {

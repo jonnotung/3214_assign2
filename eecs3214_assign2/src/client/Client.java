@@ -164,13 +164,12 @@ public class Client implements Runnable {
 			while ((response = inStream.readLine()) != null && !closed) {
 				// While the server is responding print response to console
 				
-
 				// if "Welcome" is received, user has joined, start start listening for chat requests
 				if(response.indexOf("Welcome") != -1) {
 					//parse user's name and store in myName
 					myName = response.split(" ", 2)[1];
 					//System.out.println(response);
-					peerListener = new PeerListen(myName);
+					peerListener = new PeerListen(myName, outStream);
 					peerListener.start();
 				}
 				
@@ -187,7 +186,10 @@ public class Client implements Runnable {
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
-
+	}
+	
+	public void stopReceiving() {
+		closed = true;
 	}
 }
 

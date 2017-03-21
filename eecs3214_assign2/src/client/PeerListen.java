@@ -22,6 +22,7 @@ public class PeerListen extends Thread {
 	private boolean closed, chatting;
 	private PrintStream outStream;
 	private BufferedReader inStream;
+	private PrintStream serverOut;
 	String myName;
 	PeerChat peerChat;
 	
@@ -29,8 +30,9 @@ public class PeerListen extends Thread {
 	 * Creates a thread to listen for peer to peer chat requests
 	 * @param chatSocket
 	 */
-	public PeerListen (String myname) {
+	public PeerListen (String myname, PrintStream out) {
 		myName = myname;
+		serverOut = out;
 	}
 
 	@Override 
@@ -54,6 +56,7 @@ public class PeerListen extends Thread {
 					//Start a peer to peer chat thread with chatSocket if connection is received
 					peerChat = new PeerChat(chatSocket, myName, outStream, inStream);
 					peerChat.start();
+					serverOut.println("LEAVE");
 					closed = true;
 					break;
 				}
@@ -64,6 +67,10 @@ public class PeerListen extends Thread {
 			//System.out.println(e);
 		} 
 		
+	}
+	
+	public boolean connected() {
+		return (chatSocket != null);
 	}
 	
 	public void start() {
