@@ -51,21 +51,24 @@ class PeerChat extends Thread {
 			try {
 				while ((response = inStream.readLine()) != null && looping) {
 					// if "EXITCHAT" is received then break
-					if (response.indexOf("EXITCHAT") != -1) {
-						outStream.println("EXITCHAT");
+					if (response.indexOf("***EXITCHAT") != -1) {
+						outStream.println("***EXITCHAT");
 						looping = false;
 						break;
 					}
 					//If peer is querying for my name, send it with the flag ***NAME
-					if(response.indexOf("***QUERYNAME") != -1) {
+					
+					/*if(response.indexOf("***QUERYNAME") != -1) {
 						outStream.println("***NAME " + myName);
-					}
+					}*/
+					
 					//If peer is responding to a name query with ***NAME flag, parse the name and store in peerName
-					if(response.indexOf("***NAME") != -1) {
+					/*if(response.indexOf("***NAME") != -1) {
 						peerName = response.split(" ", 2)[1].trim();
-					}
+					}*/
+					
 					// While the peer is responding print response to console
-					System.out.print(peerName + ": ");
+					//System.out.print(peerName + ": ");
 					System.out.println(response);
 				}
 				// close the client process
@@ -96,19 +99,19 @@ class PeerChat extends Thread {
 				
 				//If chat session was not rejected, print message saying it has started
 
-				System.out.println("Chat session started. Type EXITCHAT to exit.");
+				System.out.println("Chat session started. Type ***EXITCHAT to exit.");
 				//Start a thread to receive chat from peer
 				new Thread(peerResponse).start();
 				
 				//ask peer for their name
-				outStream.println("***QUERYNAME");
+				//outStream.println("***QUERYNAME");
 				
 				while(looping) {
-					System.out.print(myName + ": ");
+					//System.out.print(myName + ": ");
 					userInput = inputLine.readLine().trim();
 					outStream.println(userInput);
 					//exit chat if EXITCHAT is entered
-					if (userInput.trim().equals("EXITCHAT")){
+					if (userInput.indexOf("***EXITCHAT") != -1){
 						looping = false;
 						break;
 					}
