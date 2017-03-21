@@ -38,7 +38,7 @@ public class Client implements Runnable {
 	private static String userInput;
 	
 	//Socket to communicate peer to peer chat over
-	private static Socket chatSocket;
+	private static Socket chatSocket=null;
 	
 	//Thread to listen for peer to peer chat requests
 	static PeerListen peerListener;
@@ -128,6 +128,7 @@ public class Client implements Runnable {
 							closed = true;
 						}
 						else {
+							//if chatSocket is not successfully initialized
 							System.out.println("Could not connect to peer.");
 						}
 					}
