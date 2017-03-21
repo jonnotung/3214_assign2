@@ -80,7 +80,11 @@ public class PeerListen extends Thread {
 	}
 	
 	public void stopListening() {
-		closed = true;
+		try {
+			chatSocket.close();
+		} catch (IOException e) {
+			
+		}
 		
 	}
 
