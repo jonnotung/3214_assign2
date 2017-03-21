@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /*
- * Multithreaded client for EECS3214 assignment 1
+ * Multithreaded client for EECS3214 assignment 2
  * Code adapted from example code by Anatol Ursu at http://www.di.ase.md/~aursu/ClientServerThreads.html
  * Multithreading is used to concurrently handle I/O with the user and from the server.
  */
@@ -29,16 +29,14 @@ public class Client implements Runnable {
 	
 	//The current user's name
 	private static String myName = null;
-	//The name of person the current user is chatting to
-	private static String peerName = null;
+	
 	//Port of server to connect to
 	private static int portNumber;
 	//Address of server to connect to
 	private static String host;
 	//String to store user input for checking
 	private static String userInput;
-	//Server socket for client to listen to peer chat requests with
-	private static ServerSocket chatListenSocket;
+	
 	//Socket to communicate peer to peer chat over
 	private static Socket chatSocket;
 	
@@ -102,10 +100,13 @@ public class Client implements Runnable {
 					//If user wants to chat
 					if(userInput.equals("CHAT")) {
 						
-						System.out.println("Enter the IP address of the peer you wish to chat with: ");
+						System.out.println("Enter the IP address of the peer you wish to chat with, RETURN to return to server menu: ");
 						//ask for the IP address of the chat peer
 						String chatPeerAddress = inputLine.readLine().trim();
-						
+						//if user enters RETURN, go to the end of the while loop and continue
+						if(chatPeerAddress.equals("RETURN")) {
+							continue;
+						}
 						//Create a socket to conduct chat over
 						chatSocket = new Socket(chatPeerAddress, portNumber);
 						//if the socket successfully connects

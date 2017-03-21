@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
- * Multi threaded server for EECS3214 assignment 1
+ * Multi threaded server for EECS3214 assignment 2
  *
  * Code adapted from example code by Anatol Ursu from http://www.di.ase.md/~aursu/ClientServerThreads.html
  * Multithreading is used to handle connections to multiple clients concurrently

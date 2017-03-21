@@ -9,7 +9,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
- * Thread listenChat 
+ * Class listenChat
+ * For: EECS3214 Assignment 2
+ * @author Jonathan Tung 
  * 
  * Thread to set up a listening port for a peer to peer chat request
  * The peer chat listening port is set to 27459
@@ -28,13 +30,23 @@ public class PeerListen extends Thread {
 	
 	/**
 	 * Creates a thread to listen for peer to peer chat requests
-	 * @param chatSocket
+	 * @param myName the user's entered name
+	 * 		out output stream to the server, needed to close server connection
 	 */
 	public PeerListen (String myname, PrintStream out) {
 		myName = myname;
 		serverOut = out;
 	}
-
+	
+	/**
+	 * Main PeerListen thread. Listens for a peer to contact at chatListenSocket
+	 * If a connection is received, set up chatSocket to conduct the peer to peer chat and
+	 * start a PeerChat thread to handle the chat.
+	 * 
+	 * If a PeerChat thread is successfully started, the client's connections to the server are closed
+	 * which is to reduce confusion and text on screen due to the limitations of having only a single console 
+	 * for input and output.
+	 */
 	@Override 
 	public void run(){
 		try {
@@ -69,17 +81,23 @@ public class PeerListen extends Thread {
 		
 	}
 	
-	public boolean connected() {
-		return (chatSocket != null);
-	}
-	
+	/**
+	 * Method to start a PeerListen thread
+	 */
 	public void start() {
+		//ensures the while loop will enter
 		closed = false;
+		//calls run()
 		super.start();
 	}
 	
+	/**
+	 * Method to stop a PeerListen thread
+	 */
 	public void stopListening() {
 		try {
+			closed = true;
+			//closing chatListenSocket stops it from blocking the thread while waiting for a connection
 			chatListenSocket.close();
 		} catch (IOException e) {
 			

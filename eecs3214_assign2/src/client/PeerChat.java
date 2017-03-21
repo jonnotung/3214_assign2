@@ -9,6 +9,8 @@ import java.net.Socket;
 
 /**
  * Class PeerChat
+ * For EECS3214
+ * @Jonathan Tung
  *  
  *  This class contains a thread that will handle peer to peer chatting
  *  The thread is run when the client sends a request to a peer to chat or
@@ -23,58 +25,49 @@ class PeerChat extends Thread {
 	private BufferedReader inStream;
 	// input stream from command line from user
 	private  BufferedReader inputLine;
+	//String to temporarily store user input from command line
 	String userInput;
-	//switch to identify whether user initiated peer chat, or they were contacted by a peer
 	//switch to determine whether chat session is finished or not
 	boolean looping = true;
-	String myName=" ";
-	String peerName = " ";
-		
+	//String to store user's name
+	String myName;
+	
+	
 	/**
 	 * Creates a thread to handle peer to peer chat, to be handled over the given socket
 	 * @param chatSocket
 	 */
 	public PeerChat(Socket socket, String myname, PrintStream out, BufferedReader in) {
 		chatSocket = socket;
-		myName = myname;
 		outStream = out;
 		inStream = in;
+		myName = myname;
 	}
 	
 	/**
-	 * Thread to receive responses from chat peer
+	 * Thread to receive responses from chat peer 
+	 * A separate thread was used as chat between users may not be a synchronized 1 for 1 message
 	 */
 	Thread peerResponse = new Thread(new Runnable() {
 		public void run() {
-			// String to store server response
+			// String to store peer response
 			String response;
 			try {
+				//While the response from peer is not null and the continue flag is true, continue waiting for responses
 				while ((response = inStream.readLine()) != null && looping) {
-					// if "EXITCHAT" is received then break
+					// if "***EXITCHAT" is received then break and end chat
 					if (response.indexOf("***EXITCHAT") != -1) {
-						outStream.println("***EXITCHAT");
+						//Respond with "***EXITCHAT" to end chat on peer
+						System.out.println("Peer ended chat session. Exiting.");
 						looping = false;
 						break;
 					}
-					//If peer is querying for my name, send it with the flag ***NAME
-					
-					/*if(response.indexOf("***QUERYNAME") != -1) {
-						outStream.println("***NAME " + myName);
-					}*/
-					
-					//If peer is responding to a name query with ***NAME flag, parse the name and store in peerName
-					/*if(response.indexOf("***NAME") != -1) {
-						peerName = response.split(" ", 2)[1].trim();
-					}*/
-					
 					// While the peer is responding print response to console
 					//System.out.print(peerName + ": ");
 					System.out.println(response);
 				}
-				// close the client process
-				//looping = false;
+				
 			} catch (IOException e) {
-				//e.printStackTrace(System.out);
 			}
 
 		}
@@ -84,16 +77,16 @@ class PeerChat extends Thread {
 	@Override
 	public void run() {
 		try {
-		// Create user input stream
-		inputLine = new BufferedReader(new InputStreamReader(System.in));
-		// Creates output stream to peer
-		outStream = new PrintStream(chatSocket.getOutputStream());
-		// Creates input stream from peer
-		inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
+			// Create user input stream
+			inputLine = new BufferedReader(new InputStreamReader(System.in));
+			// Creates output stream to peer
+			outStream = new PrintStream(chatSocket.getOutputStream());
+			// Creates input stream from peer
+			inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		//if socket and in/out streams were configured correctly
 		if (chatSocket != null && outStream != null && inStream != null) {
 			try {
 				
@@ -103,14 +96,12 @@ class PeerChat extends Thread {
 				//Start a thread to receive chat from peer
 				new Thread(peerResponse).start();
 				
-				//ask peer for their name
-				//outStream.println("***QUERYNAME");
-				
+				//While the continue flag is true, take input from the user and send it to the peer
 				while(looping) {
 					//System.out.print(myName + ": ");
 					userInput = inputLine.readLine().trim();
-					outStream.println(userInput);
-					//exit chat if EXITCHAT is entered
+					outStream.println(myName + ": " + userInput);
+					//exit chat if ***EXITCHAT is entered
 					if (userInput.indexOf("***EXITCHAT") != -1){
 						looping = false;
 						break;
