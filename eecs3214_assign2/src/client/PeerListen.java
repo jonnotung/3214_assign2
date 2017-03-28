@@ -76,7 +76,8 @@ public class PeerListen extends Thread {
 			chatListenSocket.close();
 			
 		} catch (IOException e) {
-			//System.out.println(e);
+			e.printStackTrace();
+			System.exit(0);
 		} 
 		
 	}
@@ -100,7 +101,8 @@ public class PeerListen extends Thread {
 			//closing chatListenSocket stops it from blocking the thread while waiting for a connection
 			chatListenSocket.close();
 		} catch (IOException e) {
-			
+			e.printStackTrace();
+			System.exit(0);
 		}
 		
 	}

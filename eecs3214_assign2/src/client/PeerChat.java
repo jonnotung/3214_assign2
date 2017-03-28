@@ -68,6 +68,8 @@ class PeerChat extends Thread {
 				}
 				
 			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(0);
 			}
 
 		}
@@ -85,6 +87,7 @@ class PeerChat extends Thread {
 			inStream = new BufferedReader(new InputStreamReader(chatSocket.getInputStream()));
 		} catch (IOException e) {
 			e.printStackTrace();
+			System.exit(0);
 		}
 		//if socket and in/out streams were configured correctly
 		if (chatSocket != null && outStream != null && inStream != null) {
@@ -115,6 +118,7 @@ class PeerChat extends Thread {
 			}catch (IOException ioe) {
 				System.out.println("Could not get I/O from host: \n");
 				ioe.printStackTrace(System.out);
+				System.exit(0);
 			}
 		}
 	}

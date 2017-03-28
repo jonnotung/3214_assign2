@@ -78,9 +78,11 @@ public class Client implements Runnable {
 		} catch (UnknownHostException e) {
 			System.out.println("Unknown host: \n");
 			e.printStackTrace(System.out);
+			System.exit(0);
 		} catch (IOException ioe) {
 			System.out.println("Could not get I/O from host: \n");
 			ioe.printStackTrace(System.out);
+			System.exit(0);
 		}
 
 		/**
@@ -144,7 +146,8 @@ public class Client implements Runnable {
 				inStream.close();
 				clientSocket.close();
 			} catch (IOException e) {
-				//e.printStackTrace();
+				e.printStackTrace();
+				System.exit(0);
 			} 
 		}
 
@@ -186,7 +189,8 @@ public class Client implements Runnable {
 			// close the client process
 			closed = true;
 		} catch (IOException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
+			System.exit(0);
 		}
 	}
 	
